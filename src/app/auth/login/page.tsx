@@ -89,7 +89,7 @@ export default function Login() {
               <input
                 required
                 type="email"
-                className="w-full px-5 py-4 bg-gray-50 border-0 ring-1 ring-gray-200 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold placeholder:text-gray-300"
+                className="w-full px-5 py-4 bg-gray-50 border-0 ring-1 ring-gray-200 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300"
                 placeholder="you@example.com"
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
@@ -101,7 +101,7 @@ export default function Login() {
               <input
                 required
                 type="password"
-                className="w-full px-5 py-4 bg-gray-50 border-0 ring-1 ring-gray-200 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold placeholder:text-gray-300"
+                className="w-full px-5 py-4 bg-gray-50 border-0 ring-1 ring-gray-200 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300"
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}

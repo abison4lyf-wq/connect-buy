@@ -101,7 +101,7 @@ export default function ForgotPassword() {
               <input
                 required
                 type="email"
-                className="w-full px-5 py-4 bg-gray-50 border-0 ring-1 ring-gray-200 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold"
+                className="w-full px-5 py-4 bg-gray-50 border-0 ring-1 ring-gray-200 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300"
                 placeholder="Enter registered email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -127,7 +127,7 @@ export default function ForgotPassword() {
                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Registered Full Name</label>
                 <input
                   required
-                  className="w-full px-5 py-4 bg-gray-50 border-0 ring-1 ring-gray-200 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold"
+                  className="w-full px-5 py-4 bg-gray-50 border-0 ring-1 ring-gray-200 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300"
                   placeholder="Enter your full name"
                   value={verification.name}
                   onChange={(e) => setVerification({...verification, name: e.target.value})}
@@ -137,7 +137,7 @@ export default function ForgotPassword() {
                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Phone Number</label>
                 <input
                   required
-                  className="w-full px-5 py-4 bg-gray-50 border-0 ring-1 ring-gray-200 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold"
+                  className="w-full px-5 py-4 bg-gray-50 border-0 ring-1 ring-gray-200 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300"
                   placeholder="080 123 4567"
                   value={verification.phone}
                   onChange={(e) => setVerification({...verification, phone: e.target.value})}
@@ -160,7 +160,7 @@ export default function ForgotPassword() {
               <input
                 required
                 type="password"
-                className="w-full px-5 py-4 bg-gray-50 border-0 ring-1 ring-gray-200 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold"
+                className="w-full px-5 py-4 bg-gray-50 border-0 ring-1 ring-gray-200 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300"
                 placeholder="••••••••"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
