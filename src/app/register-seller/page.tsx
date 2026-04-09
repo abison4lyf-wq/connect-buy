@@ -128,14 +128,23 @@ export default function SellerRegistration() {
   };
 
   const handlePaystackPayment = () => {
+    // For MVP/Demo: If no real Paystack key is provided, simulate payment
+    if (!process.env.NEXT_PUBLIC_PAYSTACK_KEY || process.env.NEXT_PUBLIC_PAYSTACK_KEY.includes('demo')) {
+      toast.loading("Processing Secure Payment...", { duration: 1500 });
+      setTimeout(() => {
+        finishRegistration(true);
+      }, 1500);
+      return;
+    }
+
     if (!window.PaystackPop) {
-      toast.error("Paystack SDK not loaded.");
+      toast.error("Paystack SDK not loaded. Check connection.");
       return;
     }
 
     try {
       const handler = window.PaystackPop.setup({
-        key: process.env.NEXT_PUBLIC_PAYSTACK_KEY || 'pk_test_demo_key_123456789',
+        key: process.env.NEXT_PUBLIC_PAYSTACK_KEY,
         email: formData.email,
         amount: 5000 * 100, // ₦5,000 in Kobo
         currency: "NGN",
@@ -147,8 +156,8 @@ export default function SellerRegistration() {
         },
       });
       handler.openIframe();
-    } catch (e) {
-      toast.error("Error initializing Paystack.");
+    } catch (e: any) {
+      toast.error("Error initializing Paystack: " + (e.message || "Unknown error"));
     }
   };
 
