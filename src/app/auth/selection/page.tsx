@@ -86,7 +86,7 @@ function AuthSelectionContent() {
            <div className="flex-1 h-px bg-gray-200"></div>
         </div>
         <Link 
-          href="/auth/login" 
+          href={`/auth/login${queryParams}`} 
           className="block w-full bg-white border-2 border-nearbuy-primary text-nearbuy-primary hover:bg-nearbuy-primary hover:text-white font-black py-5 rounded-2xl shadow-sm transition-all active:scale-95 text-lg"
         >
           Log In to your Account

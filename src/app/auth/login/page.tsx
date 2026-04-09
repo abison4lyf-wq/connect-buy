@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 
-export default function Login() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const stateParam = searchParams.get("state") || "";
+  const lgaParam = searchParams.get("lga") || "";
 
   const [formData, setFormData] = useState({
     email: "",
@@ -45,7 +48,11 @@ export default function Login() {
             localStorage.setItem('active_seller_id', user.sellerId || user.id);
             router.push('/seller-dashboard');
          } else {
-            router.push('/marketplace');
+            if (stateParam && lgaParam) {
+               router.push(`/marketplace?state=${encodeURIComponent(stateParam)}&lga=${encodeURIComponent(lgaParam)}`);
+            } else {
+               router.push('/marketplace');
+            }
          }
       } else {
          // Fallback for sellers
@@ -145,5 +152,13 @@ export default function Login() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Login() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center font-bold text-gray-400">Loading Configuration...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
