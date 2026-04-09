@@ -122,7 +122,10 @@ export default function Navbar() {
               <p className="text-[9px] font-black text-gray-400 uppercase leading-none mb-1">Signed in as</p>
               <p className="text-[11px] font-black text-nearbuy-secondary truncate max-w-[120px]">{activeUser.name}</p>
             </div>
-            <button onClick={logout} className="p-2 text-gray-300 hover:text-red-500 bg-transparent border-0 cursor-pointer transition-colors" title="Logout"><svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg></button>
+            <button onClick={logout} className="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white font-black text-[10px] uppercase tracking-widest rounded-xl border-0 cursor-pointer transition-all active:scale-95" title="Logout">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+              Logout
+            </button>
           </div>
         )}
 

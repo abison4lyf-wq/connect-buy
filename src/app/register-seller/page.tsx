@@ -191,12 +191,12 @@ export default function SellerRegistration() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Business Name</label>
-                <input required className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all placeholder:text-gray-300 font-bold"
+                <input required className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all placeholder:text-gray-300 font-bold text-gray-900"
                   placeholder="e.g. Mide's Hub" value={formData.businessName} onChange={(e) => setFormData({...formData, businessName: e.target.value})} />
               </div>
               <div>
                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Phone Number</label>
-                <input required className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all placeholder:text-gray-300 font-bold"
+                <input required className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all placeholder:text-gray-300 font-bold text-gray-900"
                   placeholder="08012345678" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} />
               </div>
             </div>
@@ -204,12 +204,12 @@ export default function SellerRegistration() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Email Address</label>
-                <input required type="email" className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all placeholder:text-gray-300 font-bold"
+                <input required type="email" className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all placeholder:text-gray-300 font-bold text-gray-900"
                   placeholder="seller@example.com" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
               </div>
               <div>
                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Password</label>
-                <input required type="password" className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all placeholder:text-gray-300 font-bold"
+                <input required type="password" className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all placeholder:text-gray-300 font-bold text-gray-900"
                   placeholder="••••••••" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} />
               </div>
             </div>
@@ -224,14 +224,14 @@ export default function SellerRegistration() {
                 </div>
                 <div className="flex-1 w-full">
                   <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Shop Profile / Bio</label>
-                  <textarea required className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all placeholder:text-gray-300 font-bold min-h-[128px]"
+                  <textarea required className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all placeholder:text-gray-300 font-bold text-gray-900 min-h-[128px]"
                     placeholder="Briefly describe what your shop offers..." value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} />
                 </div>
             </div>
 
             <div>
               <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Market Hub</label>
-              <select required className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold appearance-none bg-white cursor-pointer"
+              <select required className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl focus:ring-2 focus:ring-nearbuy-primary outline-none transition-all font-bold appearance-none bg-white cursor-pointer text-gray-900"
                 value={formData.category} onChange={(e) => setFormData({...formData, category: e.target.value})}>
                 <option value="">Select Category</option>
                 {SHOP_GROUPS.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
@@ -243,12 +243,12 @@ export default function SellerRegistration() {
                 {formData.locations.map((loc, index) => (
                 <div key={index} className="p-8 bg-nearbuy-secondary/5 rounded-[2rem] border border-nearbuy-secondary/10 relative transition-all hover:bg-nearbuy-secondary/[0.07]">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <select required className="w-full px-5 py-4 bg-white border-0 ring-1 ring-gray-100 rounded-xl focus:ring-2 focus:ring-nearbuy-primary outline-none font-bold text-sm cursor-pointer"
+                    <select required className="w-full px-5 py-4 bg-white border-0 ring-1 ring-gray-100 rounded-xl focus:ring-2 focus:ring-nearbuy-primary outline-none font-bold text-sm cursor-pointer text-gray-900"
                         value={loc.state} onChange={(e) => updateLocation(index, { state: e.target.value, lga: "" })}>
                         <option value="">Select State</option>
                         {Object.keys(LOCATIONS_DATA).map(state => <option key={state} value={state}>{state}</option>)}
                     </select>
-                    <select required disabled={!loc.state} className="w-full px-5 py-4 bg-white border-0 ring-1 ring-gray-100 rounded-xl focus:ring-2 focus:ring-nearbuy-primary outline-none font-bold text-sm disabled:opacity-50 cursor-pointer"
+                    <select required disabled={!loc.state} className="w-full px-5 py-4 bg-white border-0 ring-1 ring-gray-100 rounded-xl focus:ring-2 focus:ring-nearbuy-primary outline-none font-bold text-sm disabled:opacity-50 cursor-pointer text-gray-900"
                         value={loc.lga} onChange={(e) => updateLocation(index, { lga: e.target.value })}>
                         <option value="">Select LGA</option>
                         {loc.state && LOCATIONS_DATA[loc.state].map(lga => <option key={lga} value={lga}>{lga}</option>)}

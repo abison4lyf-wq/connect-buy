@@ -280,7 +280,7 @@ function MarketplaceContent() {
 
                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {(selectedSeller.products || []).map((product: any) => (
-                    <div key={product.id} className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all group">
+                  <div key={product.id} className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all group">
                       <div className="aspect-[4/3] relative overflow-hidden bg-gray-100 italic">
                         <img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                         <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-nearbuy-secondary shadow-sm">
@@ -288,8 +288,11 @@ function MarketplaceContent() {
                         </div>
                       </div>
                       <div className="p-6">
-                        <h3 className="font-extrabold text-nearbuy-secondary text-lg mb-4 line-clamp-1">{product.title}</h3>
-                        <div className="flex justify-between items-center">
+                        <h3 className="font-extrabold text-nearbuy-secondary text-lg mb-1 line-clamp-1">{product.title}</h3>
+                        {product.description && (
+                          <p className="text-gray-400 text-xs font-medium leading-relaxed line-clamp-2 mb-3">{product.description}</p>
+                        )}
+                        <div className="flex justify-between items-center mt-3">
                            <span className="text-2xl font-black text-gray-900 font-mono">₦{product.price.toLocaleString()}</span>
                            <button 
                              onClick={() => {

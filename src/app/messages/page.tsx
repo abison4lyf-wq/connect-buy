@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useCart } from "@/context/CartContext";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 
 function MessagesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { cart, clearCart } = useCart();
   const [activeUser, setActiveUser] = useState<any>(null);
   const [chats, setChats] = useState<any[]>([]);
   const [activeChatId, setActiveChatId] = useState<string | null>(searchParams.get('chatId'));
@@ -283,6 +285,21 @@ function MessagesContent() {
                      </p>
                   </div>
                </div>
+
+               {activeUser?.role === 'buyer' && cart.length > 0 && (
+                  <button 
+                    onClick={() => {
+                      if (confirm('Clear your cart?')) {
+                        clearCart();
+                        toast.success("Cart cleared during negotiation.");
+                      }
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white font-black text-[10px] uppercase tracking-widest rounded-xl border-0 cursor-pointer transition-all active:scale-95"
+                  >
+                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                     Clear Cart
+                  </button>
+               )}
             </div>
 
             {/* Messages Area */}

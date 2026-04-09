@@ -8,13 +8,14 @@ interface ProductCardProps {
   id: string | number;
   image: string;
   title: string;
+  description?: string;
   price: number;
   lga: string;
   rating: number;
   sellerId: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ id, image, title, price, lga, rating, sellerId }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ id, image, title, description, price, lga, rating, sellerId }) => {
   const { addToCart } = useCart();
   return (
     <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col h-full">
@@ -31,10 +32,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ id, image, title, price, lga,
       
       <div className="p-5 flex flex-col flex-grow">
         <Link href={`/product/${id}`}>
-          <h3 className="text-nearbuy-secondary font-black text-lg group-hover:text-nearbuy-primary transition-colors leading-tight mb-2">
+          <h3 className="text-nearbuy-secondary font-black text-lg group-hover:text-nearbuy-primary transition-colors leading-tight mb-1">
             {title}
           </h3>
         </Link>
+
+        {description && (
+          <p className="text-gray-400 text-xs font-medium leading-relaxed line-clamp-2 mb-3">
+            {description}
+          </p>
+        )}
         
         <div className="flex items-center mb-4">
           <div className="flex text-yellow-500">

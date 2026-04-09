@@ -15,7 +15,7 @@ export default function SellerDashboard() {
   const [activeSeller, setActiveSeller] = useState<any>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
-  const [newProduct, setNewProduct] = useState({ title: "", price: "", image: "" });
+  const [newProduct, setNewProduct] = useState({ title: "", price: "", image: "", description: "" });
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [activeTab, setActiveTab] = useState<'inventory' | 'orders' | 'performance' | 'messages'>('inventory');
   const [orders, setOrders] = useState<any[]>([]);
@@ -211,11 +211,17 @@ export default function SellerDashboard() {
   };
 
   const addProduct = () => {
-    if (!newProduct.title || !newProduct.price) return toast.error("Fill and Price.");
-    const product = { id: "p_" + Date.now(), title: newProduct.title, price: Number(newProduct.price), image: newProduct.image || "https://images.unsplash.com/photo-1599481238640-dfc41b0501d9?q=80&w=400" };
+    if (!newProduct.title || !newProduct.price) return toast.error("Fill title and price.");
+    const product = { 
+      id: "p_" + Date.now(), 
+      title: newProduct.title, 
+      description: newProduct.description || "",
+      price: Number(newProduct.price), 
+      image: newProduct.image || "https://images.unsplash.com/photo-1599481238640-dfc41b0501d9?q=80&w=400" 
+    };
     saveToStorage({ ...activeSeller, products: [...(activeSeller.products || []), product] });
-    setShowAddModal(false); setNewProduct({ title: "", price: "", image: "" });
-    toast.success("Added!");
+    setShowAddModal(false); setNewProduct({ title: "", price: "", image: "", description: "" });
+    toast.success("Product added!");
   };
 
   const unreadCount = chats.filter(c => c.unreadForSeller).length;
@@ -404,9 +410,19 @@ export default function SellerDashboard() {
            <div className="bg-white w-full max-w-md rounded-[3.5rem] p-10 animate-in zoom-in duration-300">
               <h2 className="text-3xl font-black mb-8 italic">Stock New Item.</h2>
               <div className="space-y-6">
-                 <div><label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Item Name</label><input className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-nearbuy-primary font-bold" placeholder="e.g. Fresh Tomatoes" value={newProduct.title} onChange={(e) => setNewProduct({...newProduct, title: e.target.value})} /></div>
-                 <div><label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Price (₦)</label><input type="number" className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-nearbuy-primary font-bold" placeholder="0.00" value={newProduct.price} onChange={(e) => setNewProduct({...newProduct, price: e.target.value})} /></div>
-                 <div><label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Photo</label><div className="relative w-full h-32 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center overflow-hidden">{newProduct.image ? <img src={newProduct.image} className="w-full h-full object-cover" /> : <span className="text-gray-300 font-bold uppercase text-[10px] tracking-widest">Select Image</span>}<input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => { const file = e.target.files?.[0]; if(file) { const reader = new FileReader(); reader.onloadend = async () => { const compressed = await compressImage(reader.result as string); setNewProduct({ ...newProduct, image: compressed }); }; reader.readAsDataURL(file); } }} /></div></div>
+               <div>
+                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Item Name</label>
+                 <input className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-nearbuy-primary font-bold text-gray-900" placeholder="e.g. Fresh Tomatoes" value={newProduct.title} onChange={(e) => setNewProduct({...newProduct, title: e.target.value})} />
+               </div>
+               <div>
+                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Description</label>
+                 <textarea className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-nearbuy-primary font-bold text-gray-900 min-h-[90px] resize-none" placeholder="e.g. Freshly harvested, farm-direct quality..." value={newProduct.description} onChange={(e) => setNewProduct({...newProduct, description: e.target.value})} />
+               </div>
+               <div>
+                 <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Price (₦)</label>
+                 <input type="number" className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-nearbuy-primary font-bold text-gray-900" placeholder="0.00" value={newProduct.price} onChange={(e) => setNewProduct({...newProduct, price: e.target.value})} />
+               </div>
+               <div><label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Photo</label><div className="relative w-full h-32 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center overflow-hidden">{newProduct.image ? <img src={newProduct.image} className="w-full h-full object-cover" /> : <span className="text-gray-300 font-bold uppercase text-[10px] tracking-widest">Select Image</span>}<input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => { const file = e.target.files?.[0]; if(file) { const reader = new FileReader(); reader.onloadend = async () => { const compressed = await compressImage(reader.result as string); setNewProduct({ ...newProduct, image: compressed }); }; reader.readAsDataURL(file); } }} /></div></div>
               </div>
               <div className="flex gap-4 mt-12"><button onClick={() => setShowAddModal(false)} className="flex-1 font-black text-gray-400 uppercase py-6 border-0 bg-transparent cursor-pointer">Cancel</button><button onClick={addProduct} className="flex-1 bg-nearbuy-primary text-white font-black py-6 rounded-3xl shadow-xl shadow-green-900/10 active:scale-95 transition-all">Add to Store</button></div>
            </div>
@@ -418,8 +434,9 @@ export default function SellerDashboard() {
            <div className="bg-white w-full max-w-md rounded-[3.5rem] p-10 animate-in zoom-in duration-300">
               <h2 className="text-3xl font-black mb-8 italic">Edit Item.</h2>
               <div className="space-y-6">
-                 <div><label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Item Name</label><input className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-nearbuy-primary font-bold" value={editingProduct.title} onChange={(e) => setEditingProduct({...editingProduct, title: e.target.value})} /></div>
-                 <div><label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Price (₦)</label><input type="number" className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-nearbuy-primary font-bold" value={editingProduct.price} onChange={(e) => setEditingProduct({...editingProduct, price: Number(e.target.value)})} /></div>
+                 <div><label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Item Name</label><input className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-nearbuy-primary font-bold text-gray-900" value={editingProduct.title} onChange={(e) => setEditingProduct({...editingProduct, title: e.target.value})} /></div>
+                 <div><label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Description</label><textarea className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-nearbuy-primary font-bold text-gray-900 min-h-[90px] resize-none" placeholder="Describe your product..." value={editingProduct.description || ''} onChange={(e) => setEditingProduct({...editingProduct, description: e.target.value})} /></div>
+                 <div><label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Price (₦)</label><input type="number" className="w-full px-6 py-5 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-nearbuy-primary font-bold text-gray-900" value={editingProduct.price} onChange={(e) => setEditingProduct({...editingProduct, price: Number(e.target.value)})} /></div>
                  <div><label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2 px-2">Photo</label><div className="relative w-full h-32 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center overflow-hidden"><img src={editingProduct.image} className="w-full h-full object-cover" /><input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => { const file = e.target.files?.[0]; if(file) { const reader = new FileReader(); reader.onloadend = async () => { const compressed = await compressImage(reader.result as string); setEditingProduct({ ...editingProduct, image: compressed }); }; reader.readAsDataURL(file); } }} /></div></div>
               </div>
               <div className="flex gap-4 mt-12"><button onClick={() => setEditingProduct(null)} className="flex-1 font-black text-gray-400 uppercase py-6 border-0 bg-transparent cursor-pointer">Cancel</button><button onClick={() => { const updatedProducts = activeSeller.products.map((p: any) => p.id === editingProduct.id ? editingProduct : p); saveToStorage({ ...activeSeller, products: updatedProducts }); setEditingProduct(null); toast.success("Saved."); }} className="flex-1 bg-nearbuy-primary text-white font-black py-6 rounded-3xl shadow-xl shadow-green-900/10 active:scale-95 transition-all">Save Changes</button></div>
