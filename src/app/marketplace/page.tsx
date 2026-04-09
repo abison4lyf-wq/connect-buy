@@ -51,23 +51,36 @@ function MarketplaceContent() {
     setActiveUser(JSON.parse(activeUserRaw));
     setIsAuthorized(true);
 
-    // Load sellers from localStorage
-    const savedSellers = JSON.parse(localStorage.getItem('nearbuy_sellers') || '[]');
-    const merged = { ...STATIC_SELLERS };
-    
-    savedSellers.forEach((s: any) => {
-      if (merged[s.category]) {
-        // Only add if not already in the static list (avoid duplicate IDs)
-        const exists = merged[s.category].some((existing: any) => existing.id === s.id);
-        if (!exists) {
-          merged[s.category] = [...merged[s.category], s];
+    const loadSellers = () => {
+      const savedSellers = JSON.parse(localStorage.getItem('nearbuy_sellers') || '[]');
+      const merged = { ...STATIC_SELLERS };
+      
+      savedSellers.forEach((s: any) => {
+        if (merged[s.category]) {
+          // If exists, replace with the latest from storage
+          const existingIdx = merged[s.category].findIndex((existing: any) => existing.id === s.id);
+          if (existingIdx !== -1) {
+            merged[s.category][existingIdx] = s;
+          } else {
+            merged[s.category] = [...merged[s.category], s];
+          }
+        } else {
+          merged[s.category] = [s];
         }
-      } else {
-        merged[s.category] = [s];
-      }
-    });
+      });
+      
+      setSellers(merged);
+    };
+
+    loadSellers();
+
+    window.addEventListener('nearbuy_sync', loadSellers);
+    window.addEventListener('storage', loadSellers);
     
-    setSellers(merged);
+    return () => {
+      window.removeEventListener('nearbuy_sync', loadSellers);
+      window.removeEventListener('storage', loadSellers);
+    };
   }, [router]);
 
   // 1. Get all sellers in the current group
@@ -247,43 +260,53 @@ function MarketplaceContent() {
              </>
            ) : selectedSeller ? (
              <>
-               <div className="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-sm mb-8 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-40 h-40 bg-nearbuy-primary/5 rounded-bl-[100px]"></div>
+               <div className="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-2xl shadow-green-900/5 mb-8 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-nearbuy-primary/5 rounded-bl-full group-hover:bg-nearbuy-primary/10 transition-colors duration-700"></div>
+                  <div className="absolute bottom-0 left-0 w-32 h-32 bg-nearbuy-accent/5 rounded-tr-full mix-blend-multiply"></div>
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
-                    <div className="flex items-center gap-6">
-                      <img src={selectedSeller.image || "https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=400"} className="w-20 h-20 rounded-3xl object-cover shadow-md" alt={selectedSeller.name} />
+                    <div className="flex items-center gap-8">
+                       <div className="w-24 h-24 rounded-[2rem] overflow-hidden shadow-xl ring-4 ring-white relative shrink-0">
+                          <img src={selectedSeller.image || "https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=400"} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={selectedSeller.name} />
+                          {selectedSeller.verified && (
+                             <div className="absolute top-0 inset-x-0 h-full w-full bg-gradient-to-t from-black/50 to-transparent flex items-end justify-center pb-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span className="bg-nearbuy-primary text-white text-[8px] font-black uppercase px-2 py-1 rounded-full border border-white/50 backdrop-blur-md">Verified</span>
+                             </div>
+                          )}
+                       </div>
                        <div>
                          <div className="flex items-center gap-3 mb-2">
-                            <h1 className="text-4xl font-extrabold text-nearbuy-secondary tracking-tight">{selectedSeller.name}</h1>
-                            {selectedSeller.verified && (
-                               <span className="bg-nearbuy-primary/10 text-nearbuy-primary px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
-                                  <span className="text-sm">✓</span> Verified
-                               </span>
-                            )}
+                            <h1 className="text-4xl md:text-5xl font-extrabold text-nearbuy-secondary tracking-tighter drop-shadow-sm">{selectedSeller.name}</h1>
                          </div>
-                         <p className="text-sm text-gray-500 font-medium italic max-w-lg mb-3">"{selectedSeller.description || "Verified NearBuy Local Partner."}"</p>
-                         <div className="flex items-center gap-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                            <span className="flex items-center gap-1"><span className="text-nearbuy-primary text-lg">●</span> {selectedSeller.delivery} Delivery</span>
-                            <span className="flex items-center gap-1"><span className="text-nearbuy-primary text-lg">●</span> {selectedSeller.phone || "Verified Contact"}</span>
+                         <p className="text-sm text-gray-500 font-medium italic max-w-lg mb-4 bg-gray-50 px-4 py-2 rounded-xl inline-block border border-gray-100 shadow-sm">"{selectedSeller.description || "Verified NearBuy Local Partner."}"</p>
+                         <div className="flex flex-wrap items-center gap-4 text-[10px] font-black text-nearbuy-secondary uppercase tracking-widest">
+                            <span className="flex items-center gap-1 bg-nearbuy-primary/10 px-3 py-1 rounded-lg"><span className="text-nearbuy-primary">⚡</span> {selectedSeller.delivery} Delivery</span>
+                            <span className="flex items-center gap-1 bg-gray-100 px-3 py-1 rounded-lg"><span className="text-gray-400 font-normal">📞</span> {selectedSeller.phone || "Verified Contact"}</span>
                          </div>
                       </div>
                     </div>
                     <button 
                        onClick={() => startChatWithSeller(selectedSeller)}
-                       className="bg-nearbuy-secondary hover:bg-nearbuy-primary transition-all active:scale-95 text-white px-8 py-5 rounded-3xl shadow-xl flex-shrink-0 border-0 cursor-pointer flex flex-col justify-center gap-1"
+                       className="bg-nearbuy-secondary hover:bg-nearbuy-primary transition-all duration-300 active:scale-95 text-white px-8 py-5 rounded-3xl shadow-xl flex-shrink-0 border border-white/10 cursor-pointer flex flex-col justify-center gap-1 relative overflow-hidden group/btn"
                     >
-                       <p className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] leading-none mb-1">Direct Chat</p>
-                       <p className="font-extrabold text-sm uppercase tracking-widest leading-none">Negotiate Hub ✉</p>
+                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover/btn:animate-[shimmer_1.5s_infinite]"></div>
+                       <p className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] leading-none mb-1 group-hover/btn:text-white/80 transition-colors">Direct Chat</p>
+                       <p className="font-extrabold text-sm uppercase tracking-widest leading-none drop-shadow-md">Negotiate Hub ✉</p>
                     </button>
                   </div>
                </div>
 
                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {(selectedSeller.products || []).map((product: any) => (
-                  <div key={product.id} className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all group">
-                      <div className="aspect-[4/3] relative overflow-hidden bg-gray-100 italic">
-                        <img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-nearbuy-secondary shadow-sm">
+                  <div key={product.id} className="bg-white rounded-[2rem] overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer flex flex-col h-full relative">
+                      {product.outOfStock && (
+                         <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-20 flex items-center justify-center">
+                            <span className="bg-white text-gray-900 border border-gray-200 px-6 py-2 rounded-2xl font-black uppercase tracking-widest shadow-xl rotate-12 text-xs">Out of Stock</span>
+                         </div>
+                      )}
+                      <div className="aspect-[4/3] relative overflow-hidden bg-gray-50 italic shrink-0">
+                        <img src={product.image} alt={product.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent mix-blend-multiply opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-nearbuy-secondary shadow-lg z-10">
                           INSTOCK
                         </div>
                       </div>

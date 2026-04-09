@@ -321,12 +321,12 @@ export default function AdminPage() {
                      <p className="text-xs font-bold text-nearbuy-primary flex items-center gap-1">Live Inventory Scale</p>
                   </div>
                </div>
-               <div className="bg-nearbuy-primary p-8 rounded-[2.5rem] shadow-xl shadow-green-900/10 text-white flex flex-col justify-between h-48 relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-bl-full group-hover:scale-110 transition-transform"></div>
-                   <p className="text-xs font-black text-white/60 uppercase tracking-widest">Platform Net Profit</p>
-                  <div>
-                     <p className="text-4xl font-mono font-black mb-2">₦{stats.totalIncome.toLocaleString()}</p>
-                     <p className="text-[10px] font-bold text-white/80 uppercase">Fees & Pro Subs Only</p>
+               <div className="bg-nearbuy-primary p-8 rounded-[2.5rem] shadow-2xl shadow-green-900/40 text-white flex flex-col justify-between h-48 relative overflow-hidden group border border-nearbuy-accent">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-bl-full group-hover:scale-125 transition-transform duration-700"></div>
+                   <p className="text-xs font-black text-white uppercase tracking-widest relative z-10 drop-shadow-md">Platform Net Profit</p>
+                  <div className="relative z-10">
+                     <p className="text-4xl font-mono font-black mb-2 drop-shadow-md">₦{stats.totalIncome.toLocaleString()}</p>
+                     <p className="text-[10px] font-black text-white uppercase bg-black/20 inline-block px-3 py-1 rounded-full backdrop-blur-sm backdrop-filter">Fees & Pro Subs Only</p>
                   </div>
                </div>
             </div>
@@ -430,19 +430,19 @@ export default function AdminPage() {
                                  </div>
                               </td>
                               <td className="py-8 text-right">
-                                 {!seller.isGlobal && (
-                                   <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all">
+                                  {!seller.isGlobal && (
+                                   <div className="flex justify-end gap-3 transition-all">
                                     <button 
                                        onClick={() => toggleVerify(seller.id)}
-                                       className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all ${
-                                          seller.verified ? 'bg-gray-100 text-gray-400' : 'bg-nearbuy-primary text-white'
+                                       className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all shadow-sm ${
+                                          seller.verified ? 'bg-gray-100 text-gray-500 hover:bg-gray-200' : 'bg-nearbuy-primary text-white hover:bg-nearbuy-accent'
                                        }`}
                                     >
                                        {seller.verified ? 'Unverify' : 'Approve'}
                                     </button>
                                     <button 
                                        onClick={() => deleteSeller(seller.id)}
-                                       className="px-4 py-2 bg-red-50 text-red-400 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white transition-all"
+                                       className="px-4 py-2 bg-red-50 text-red-500 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white transition-all shadow-sm"
                                     >
                                        Delete
                                     </button>

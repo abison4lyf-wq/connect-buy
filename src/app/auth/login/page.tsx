@@ -12,51 +12,56 @@ export default function Login() {
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
     // Simulate login for MVP
-    const existingUsers = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('nearbuy_users') || '[]') : [];
-    
-    const user = existingUsers.find((u: any) => u.email === formData.email && u.password === formData.password);
-    
-    // Admin Check (Dynamic + Fallback)
-    const adminCredsRaw = typeof window !== 'undefined' ? localStorage.getItem('nearbuy_admin_creds') : null;
-    const adminCreds = adminCredsRaw ? JSON.parse(adminCredsRaw) : { email: 'admin@connectbuy.com', password: 'admin123' };
+    setTimeout(() => {
+      const existingUsers = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('nearbuy_users') || '[]') : [];
+      
+      const user = existingUsers.find((u: any) => u.email === formData.email && u.password === formData.password);
+      
+      // Admin Check (Dynamic + Fallback)
+      const adminCredsRaw = typeof window !== 'undefined' ? localStorage.getItem('nearbuy_admin_creds') : null;
+      const adminCreds = adminCredsRaw ? JSON.parse(adminCredsRaw) : { email: 'admin@connectbuy.com', password: 'admin123' };
 
-    if (formData.email === adminCreds.email && formData.password === adminCreds.password) {
-       const adminUser = { email: adminCreds.email, role: 'admin', name: 'System Admin' };
-       localStorage.setItem('nearbuy_active_user', JSON.stringify(adminUser));
-       toast.success("Welcome, Supreme Admin!");
-       router.push('/admin');
-       return;
-    }
+      if (formData.email === adminCreds.email && formData.password === adminCreds.password) {
+         const adminUser = { email: adminCreds.email, role: 'admin', name: 'System Admin' };
+         localStorage.setItem('nearbuy_active_user', JSON.stringify(adminUser));
+         toast.success("Welcome, Supreme Admin!");
+         router.push('/admin');
+         return;
+      }
 
-    if (user) {
-       localStorage.setItem('nearbuy_active_user', JSON.stringify(user));
-       toast.success(`Welcome back to Connect Buy, ${user.name}!`);
-       if (user.role === 'admin') {
-          router.push('/admin');
-       } else if (user.role === 'seller') {
-          localStorage.setItem('active_seller_id', user.sellerId || user.id);
-          router.push('/seller-dashboard');
-       } else {
-          router.push('/marketplace');
-       }
-    } else {
-       // Fallback for sellers
-       const existingSellers = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('nearbuy_sellers') || '[]') : [];
-       const seller = existingSellers.find((s: any) => s.email === formData.email && s.password === formData.password);
-       if (seller) {
-          localStorage.setItem('nearbuy_active_user', JSON.stringify({ ...seller, role: 'seller' }));
-          localStorage.setItem('active_seller_id', seller.id);
-          toast.success("Welcome back to Seller Dashboard!");
-          router.push('/seller-dashboard');
-       } else {
-          toast.error("Invalid email or password. Please try again.");
-       }
-    }
+      if (user) {
+         localStorage.setItem('nearbuy_active_user', JSON.stringify(user));
+         toast.success(`Welcome back to Connect Buy, ${user.name}!`);
+         if (user.role === 'admin') {
+            router.push('/admin');
+         } else if (user.role === 'seller') {
+            localStorage.setItem('active_seller_id', user.sellerId || user.id);
+            router.push('/seller-dashboard');
+         } else {
+            router.push('/marketplace');
+         }
+      } else {
+         // Fallback for sellers
+         const existingSellers = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('nearbuy_sellers') || '[]') : [];
+         const seller = existingSellers.find((s: any) => s.email === formData.email && s.password === formData.password);
+         if (seller) {
+            localStorage.setItem('nearbuy_active_user', JSON.stringify({ ...seller, role: 'seller' }));
+            localStorage.setItem('active_seller_id', seller.id);
+            toast.success("Welcome back to Seller Dashboard!");
+            router.push('/seller-dashboard');
+         } else {
+            toast.error("Invalid email or password. Please try again.");
+            setIsLoading(false);
+         }
+      }
+    }, 1000);
   };
 
   return (
@@ -116,9 +121,20 @@ export default function Login() {
 
           <button
             type="submit"
-            className="w-full bg-nearbuy-primary hover:bg-nearbuy-accent text-white font-black py-5 rounded-2xl shadow-xl shadow-green-900/20 active:scale-95 transition-all text-sm uppercase tracking-widest mt-4"
+            disabled={isLoading}
+            className="w-full bg-nearbuy-primary hover:bg-nearbuy-accent text-white font-black py-5 rounded-2xl shadow-xl shadow-green-900/20 active:scale-95 transition-all text-sm uppercase tracking-widest mt-4 flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            Sign In
+            {isLoading ? (
+              <>
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Authenticating...
+              </>
+            ) : (
+              "Sign In"
+            )}
           </button>
         </form>
         

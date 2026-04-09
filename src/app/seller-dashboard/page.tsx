@@ -208,6 +208,8 @@ export default function SellerDashboard() {
     const newSellers = sellers.map((s: any) => s.id === updatedSeller.id ? updatedSeller : s);
     localStorage.setItem('nearbuy_sellers', JSON.stringify(newSellers));
     setActiveSeller(updatedSeller);
+    window.dispatchEvent(new Event('nearbuy_sync'));
+    window.dispatchEvent(new StorageEvent('storage', { key: 'nearbuy_sellers' }));
   };
 
   const addProduct = () => {
@@ -246,23 +248,30 @@ export default function SellerDashboard() {
 
       <div className="max-w-7xl mx-auto px-6 mt-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
         <aside className="lg:col-span-1 space-y-8">
-            <div className="bg-nearbuy-secondary text-white p-8 rounded-[3rem] shadow-xl relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-bl-full"></div>
-               <div className="relative z-10">
-                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-nearbuy-primary mb-6">Business Wallet</p>
-                 <div className="space-y-6">
-                    <div>
-                       <p className="text-3xl font-black font-mono">₦{getAvailableBalance().toLocaleString()}</p>
-                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Available for Payout</p>
-                    </div>
-                    <div className="pt-6 border-t border-white/10">
-                       <p className="text-xl font-black font-mono text-gray-300">₦{getEscrowBalance().toLocaleString()}</p>
-                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Held in Escrow 🛡️</p>
-                    </div>
-                 </div>
-                 <button className="w-full mt-8 bg-nearbuy-primary text-white font-black py-4 rounded-2xl active:scale-95 transition-all text-[10px] uppercase tracking-widest border-0 cursor-pointer">
-                    Request Withdrawal
-                 </button>
+            <div className="bg-nearbuy-primary text-white p-8 rounded-[3rem] shadow-2xl shadow-green-900/40 relative overflow-hidden flex flex-col justify-between border border-nearbuy-accent">
+               <div className="absolute -top-10 -right-10 w-48 h-48 bg-white/20 rounded-bl-full mix-blend-overlay"></div>
+               <div className="relative z-10 mb-8">
+                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 mb-2">Total Balance</p>
+                 <p className="text-4xl font-black font-mono tracking-tight drop-shadow-md">₦{getAvailableBalance().toLocaleString()}</p>
+                 <p className="text-[10px] font-black text-white uppercase bg-black/20 inline-block px-3 py-1 rounded-full backdrop-blur-sm backdrop-filter mt-3">Ready for Payout</p>
+               </div>
+               
+               <div className="relative z-10 pt-6 border-t border-white/20">
+                  <div className="flex justify-between items-center hidden">
+                     <div>
+                       <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest mb-1">Held in Escrow 🛡️</p>
+                       <p className="text-xl font-black font-mono text-white/90">₦{getEscrowBalance().toLocaleString()}</p>
+                     </div>
+                  </div>
+                  <div className="flex justify-between items-center gap-4">
+                     <div className="flex flex-col">
+                        <p className="text-[10px] font-black text-white/70 uppercase tracking-widest mb-1">Escrow 🛡️</p>
+                        <p className="text-xl font-black font-mono text-white/90">₦{getEscrowBalance().toLocaleString()}</p>
+                     </div>
+                     <button className="bg-white text-nearbuy-primary font-black py-3 px-6 rounded-2xl active:scale-95 transition-transform text-[10px] uppercase tracking-widest border-0 cursor-pointer shadow-lg hover:shadow-xl shrink-0">
+                        Withdraw
+                     </button>
+                  </div>
                </div>
             </div>
 
@@ -304,7 +313,19 @@ export default function SellerDashboard() {
                          <div className="w-24 h-24 rounded-3xl overflow-hidden flex-shrink-0 bg-gray-50 border border-gray-100"><img src={product.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt={product.title} /></div>
                          <div className="flex-1">
                             <h4 className="font-extrabold text-nearbuy-secondary mb-1 leading-tight">{product.title}</h4>
-                            <p className="text-xl font-black text-nearbuy-primary mb-4 font-mono">₦{product.price.toLocaleString()}</p>
+                            <div className="flex items-center justify-between mb-4">
+                               <p className="text-xl font-black text-nearbuy-primary font-mono whitespace-nowrap">₦{product.price.toLocaleString()}</p>
+                               <button 
+                                 onClick={() => {
+                                   const updatedProducts = activeSeller.products.map((p: any) => p.id === product.id ? { ...p, outOfStock: !p.outOfStock } : p);
+                                   saveToStorage({ ...activeSeller, products: updatedProducts });
+                                   toast.success(product.outOfStock ? "Item back in stock!" : "Marked as Out of Stock.");
+                                 }}
+                                 className={`text-[9px] font-black uppercase px-3 py-1 rounded-full transition-all border cursor-pointer ${product.outOfStock ? 'bg-red-50 text-red-500 border-red-100' : 'bg-green-50 text-green-600 border-green-100'}`}
+                               >
+                                 {product.outOfStock ? "Out of Stock" : "In Stock"}
+                               </button>
+                            </div>
                             <div className="flex gap-3">
                                <button onClick={() => setEditingProduct(product)} className="text-[10px] font-black text-nearbuy-secondary uppercase bg-gray-100 px-4 py-2 rounded-lg hover:bg-nearbuy-primary hover:text-white transition-all border-0 cursor-pointer">Edit</button>
                                <button onClick={() => { if(confirm("Remove?")) { const updated = { ...activeSeller, products: activeSeller.products.filter((p: any) => p.id !== product.id) }; saveToStorage(updated); toast.success("Removed."); } }} className="text-[10px] font-black text-red-400 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition-all border-0 cursor-pointer">Remove</button>
@@ -330,9 +351,12 @@ export default function SellerDashboard() {
                          ))}
                       </div>
                       {order.status === 'pending' && (
-                        <div className="flex items-center gap-4 pt-6 border-t border-gray-50">
-                           <div className="flex-1"><p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Buyer Handshake Code</p><input maxLength={4} placeholder="Enter 4-digit code" className="w-full px-4 py-3 bg-gray-50 border-0 ring-1 ring-gray-100 rounded-xl font-mono font-black text-lg focus:ring-2 focus:ring-nearbuy-primary transition-all" value={verificationInput[order.id] || ''} onChange={(e) => setVerificationInput({...verificationInput, [order.id]: e.target.value})} /></div>
-                           <button onClick={() => verifyDelivery(order.id)} className="mt-6 bg-nearbuy-secondary text-white font-black py-4 px-8 rounded-xl active:scale-95 transition-all text-xs uppercase tracking-widest border-0 cursor-pointer">Verify</button>
+                        <div className="pt-6 border-t border-gray-100">
+                           <p className="text-[10px] font-black text-nearbuy-primary uppercase tracking-widest mb-3 flex items-center gap-2"><span className="w-1.5 h-1.5 bg-nearbuy-primary rounded-full animate-ping"></span> Buyer Verification Required</p>
+                           <div className="flex flex-col sm:flex-row items-center gap-4">
+                              <input maxLength={4} placeholder="Enter 4-digit token" className="w-full sm:w-2/3 px-5 py-4 bg-gray-50 border-0 ring-1 ring-gray-200 rounded-2xl font-mono font-black text-lg focus:ring-2 focus:ring-nearbuy-primary transition-all text-center tracking-widest text-nearbuy-secondary placeholder:text-gray-300" value={verificationInput[order.id] || ''} onChange={(e) => setVerificationInput({...verificationInput, [order.id]: e.target.value})} />
+                              <button onClick={() => verifyDelivery(order.id)} className="w-full sm:w-1/3 bg-nearbuy-primary hover:bg-nearbuy-accent text-white font-black py-4 px-6 rounded-2xl active:scale-95 transition-all text-sm uppercase tracking-widest border-0 cursor-pointer shadow-lg shadow-green-900/10">Approve</button>
+                           </div>
                         </div>
                       )}
                       {order.status === 'delivered' && <div className="pt-6 border-t border-gray-50 flex items-center gap-2 text-blue-500 font-bold text-xs uppercase tracking-widest"><span className="animate-pulse">●</span> Waiting for Release</div>}
